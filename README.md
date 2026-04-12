@@ -28,7 +28,7 @@ Compilar y exportar APK en [Kodular](https://kodular.io) (Build > Android App Bu
 
 ## Archivos
 
-- `backend/` — servidor Node (CRUD 2 tablas, reportes, login, email recuperación).
+- `backend/` — servidor Node (tablas **usuarios**: username, password hash, nombre, email; **celulares**: ejercicio; CRUD, reportes, login por username, recuperación por email).
 - `sql/schema.sql` — mismo modelo para PostgreSQL/MySQL en la nube (Neon, Supabase, etc.).
 - `kodular/endpoints.json` — rutas para el componente Web.
 

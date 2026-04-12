@@ -1,8 +1,8 @@
 {
   "baseEjemplo": "http://TU_IP:3000",
   "auth": {
-    "registro": { "method": "POST", "path": "/api/auth/registro", "body": { "email": "", "password": "", "nombre": "" } },
-    "login": { "method": "POST", "path": "/api/auth/login", "body": { "email": "", "password": "" } },
+    "registro": { "method": "POST", "path": "/api/auth/registro", "body": { "username": "", "password": "", "nombre": "", "email": "" } },
+    "login": { "method": "POST", "path": "/api/auth/login", "body": { "username": "", "password": "" } },
     "recuperarClave": { "method": "POST", "path": "/api/auth/recuperar-clave", "body": { "email": "" } },
     "restablecerClave": { "method": "POST", "path": "/api/auth/restablecer-clave", "body": { "email": "", "codigo": "", "nuevaPassword": "" } }
   },
@@ -10,8 +10,8 @@
   "usuarios": {
     "listar": { "method": "GET", "path": "/api/usuarios" },
     "obtener": { "method": "GET", "path": "/api/usuarios/:id" },
-    "crear": { "method": "POST", "path": "/api/usuarios", "body": { "email": "", "password": "", "nombre": "" } },
-    "actualizar": { "method": "PUT", "path": "/api/usuarios/:id", "body": { "email": "", "password": "", "nombre": "" } },
+    "crear": { "method": "POST", "path": "/api/usuarios", "body": { "username": "", "password": "", "nombre": "", "email": "" } },
+    "actualizar": { "method": "PUT", "path": "/api/usuarios/:id", "body": { "username": "", "password": "", "nombre": "", "email": "" } },
     "eliminar": { "method": "DELETE", "path": "/api/usuarios/:id" }
   },
   "celulares": {

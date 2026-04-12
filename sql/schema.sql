@@ -1,6 +1,7 @@
 -- PostgreSQL / MySQL (ajustar tipos si hace falta)
 CREATE TABLE IF NOT EXISTS usuarios (
   id SERIAL PRIMARY KEY,
+  username VARCHAR(128) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   nombre VARCHAR(255),

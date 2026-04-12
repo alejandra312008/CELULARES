@@ -15,29 +15,41 @@ const port = Number(process.env.PORT || 3000);
 
 /* ---------- auth ---------- */
 app.post("/api/auth/registro", (req, res) => {
-  const { email, password, nombre } = req.body || {};
-  if (!email || !password) return res.status(400).json({ error: "email y password requeridos" });
+  const { username, password, nombre, email } = req.body || {};
+  if (!username || !password || !email) {
+    return res.status(400).json({ error: "username, password y email requeridos" });
+  }
   try {
     const hash = bcrypt.hashSync(password, 10);
     const r = db
-      .prepare("INSERT INTO usuarios (email, password_hash, nombre) VALUES (?,?,?)")
-      .run(email, hash, nombre || null);
-    return res.status(201).json({ id: r.lastInsertRowid, email, nombre: nombre || null });
+      .prepare("INSERT INTO usuarios (username, email, password_hash, nombre) VALUES (?,?,?,?)")
+      .run(username, email, hash, nombre || null);
+    return res.status(201).json({
+      id: r.lastInsertRowid,
+      username,
+      email,
+      nombre: nombre || null,
+    });
   } catch (e) {
-    if (String(e).includes("UNIQUE")) return res.status(409).json({ error: "email ya registrado" });
+    if (String(e).includes("UNIQUE")) {
+      return res.status(409).json({ error: "username o email ya registrado" });
+    }
     throw e;
   }
 });
 
 app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ error: "email y password requeridos" });
-  const u = db.prepare("SELECT * FROM usuarios WHERE email = ?").get(email);
+  const { username, password } = req.body || {};
+  if (!username || !password) return res.status(400).json({ error: "username y password requeridos" });
+  const u = db.prepare("SELECT * FROM usuarios WHERE username = ?").get(username);
   if (!u || !bcrypt.compareSync(password, u.password_hash)) {
     return res.status(401).json({ error: "credenciales invalidas" });
   }
-  const token = signToken({ sub: u.id, email: u.email });
-  return res.json({ token, usuario: { id: u.id, email: u.email, nombre: u.nombre } });
+  const token = signToken({ sub: u.id, username: u.username, email: u.email });
+  return res.json({
+    token,
+    usuario: { id: u.id, username: u.username, email: u.email, nombre: u.nombre },
+  });
 });
 
 app.post("/api/auth/recuperar-clave", async (req, res) => {
@@ -75,44 +87,48 @@ app.post("/api/auth/restablecer-clave", (req, res) => {
 /* ---------- usuarios CRUD ---------- */
 app.get("/api/usuarios", verifyToken, (req, res) => {
   const rows = db
-    .prepare(
-      "SELECT id, email, nombre, created_at FROM usuarios ORDER BY id"
-    )
+    .prepare("SELECT id, username, nombre, email, created_at FROM usuarios ORDER BY id")
     .all();
   res.json(rows);
 });
 
 app.get("/api/usuarios/:id", verifyToken, (req, res) => {
   const row = db
-    .prepare("SELECT id, email, nombre, created_at FROM usuarios WHERE id = ?")
+    .prepare("SELECT id, username, nombre, email, created_at FROM usuarios WHERE id = ?")
     .get(req.params.id);
   if (!row) return res.status(404).json({ error: "no encontrado" });
   res.json(row);
 });
 
 app.post("/api/usuarios", verifyToken, (req, res) => {
-  const { email, password, nombre } = req.body || {};
-  if (!email || !password) return res.status(400).json({ error: "email y password requeridos" });
+  const { username, password, nombre, email } = req.body || {};
+  if (!username || !password || !email) {
+    return res.status(400).json({ error: "username, password y email requeridos" });
+  }
   try {
     const hash = bcrypt.hashSync(password, 10);
-    const r = db.prepare("INSERT INTO usuarios (email, password_hash, nombre) VALUES (?,?,?)").run(
+    const r = db
+      .prepare("INSERT INTO usuarios (username, email, password_hash, nombre) VALUES (?,?,?,?)")
+      .run(username, email, hash, nombre || null);
+    res.status(201).json({
+      id: r.lastInsertRowid,
+      username,
       email,
-      hash,
-      nombre || null
-    );
-    res.status(201).json({ id: r.lastInsertRowid, email, nombre: nombre || null });
+      nombre: nombre || null,
+    });
   } catch (e) {
-    if (String(e).includes("UNIQUE")) return res.status(409).json({ error: "email duplicado" });
+    if (String(e).includes("UNIQUE")) return res.status(409).json({ error: "username o email duplicado" });
     throw e;
   }
 });
 
 app.put("/api/usuarios/:id", verifyToken, (req, res) => {
-  const { email, password, nombre } = req.body || {};
+  const { username, password, nombre, email } = req.body || {};
   const id = req.params.id;
   const u = db.prepare("SELECT id FROM usuarios WHERE id = ?").get(id);
   if (!u) return res.status(404).json({ error: "no encontrado" });
-  if (email) db.prepare("UPDATE usuarios SET email = ? WHERE id = ?").run(email, id);
+  if (username !== undefined) db.prepare("UPDATE usuarios SET username = ? WHERE id = ?").run(username, id);
+  if (email !== undefined) db.prepare("UPDATE usuarios SET email = ? WHERE id = ?").run(email, id);
   if (nombre !== undefined) db.prepare("UPDATE usuarios SET nombre = ? WHERE id = ?").run(nombre, id);
   if (password) {
     const hash = bcrypt.hashSync(password, 10);
@@ -279,7 +295,7 @@ app.get("/api/reportes/usuarios/dominio-nombre", verifyToken, (req, res) => {
   const nombreLike = req.query.nombreLike || "";
   const rows = db
     .prepare(
-      `SELECT id, email, nombre, created_at FROM usuarios
+      `SELECT id, username, email, nombre, created_at FROM usuarios
        WHERE (? = '' OR email LIKE '%' || ? || '%')
        AND (? = '' OR nombre LIKE '%' || ? || '%')
        ORDER BY id`
@@ -291,7 +307,7 @@ app.get("/api/reportes/usuarios/dominio-nombre", verifyToken, (req, res) => {
 app.get("/api/reportes/usuarios/creados-desde", verifyToken, (req, res) => {
   const desde = req.query.desde || "";
   const hasta = req.query.hasta || "";
-  let sql = `SELECT id, email, nombre, created_at FROM usuarios WHERE 1=1`;
+  let sql = `SELECT id, username, email, nombre, created_at FROM usuarios WHERE 1=1`;
   const params = [];
   if (desde) {
     sql += ` AND date(created_at) >= date(?)`;

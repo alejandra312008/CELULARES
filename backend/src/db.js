@@ -14,6 +14,7 @@ db.pragma("journal_mode = WAL");
 db.exec(`
 CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   nombre TEXT,
@@ -51,5 +52,13 @@ CREATE INDEX IF NOT EXISTS idx_celulares_marca ON celulares(marca);
 CREATE INDEX IF NOT EXISTS idx_celulares_so ON celulares(sistemaOperativo);
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 `);
+
+const cols = db.prepare("PRAGMA table_info(usuarios)").all();
+const colNames = new Set(cols.map((c) => c.name));
+if (cols.length > 0 && !colNames.has("username")) {
+  db.exec("ALTER TABLE usuarios ADD COLUMN username TEXT");
+  db.prepare("UPDATE usuarios SET username = email WHERE username IS NULL OR trim(username) = ''").run();
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_usuarios_username ON usuarios(username)");
+}
 
 export default db;
