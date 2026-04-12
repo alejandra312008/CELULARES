@@ -1,0 +1,4 @@
+TinyDB: guardar token JWT, email usuario, ultima respuesta API, cache listas.
+Sensores (minimo 2): AccelerometerSensor + LocationSensor (o ProximitySensor).
+AccelerometerSensor: al Shake guardar timestamp en TinyDB tag ultimo_shake.
+LocationSensor: al LocationChanged guardar latitude longitude en TinyDB tag ultima_ubicacion.

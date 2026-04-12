@@ -1,0 +1,55 @@
+{
+  "baseEjemplo": "http://TU_IP:3000",
+  "auth": {
+    "registro": { "method": "POST", "path": "/api/auth/registro", "body": { "email": "", "password": "", "nombre": "" } },
+    "login": { "method": "POST", "path": "/api/auth/login", "body": { "email": "", "password": "" } },
+    "recuperarClave": { "method": "POST", "path": "/api/auth/recuperar-clave", "body": { "email": "" } },
+    "restablecerClave": { "method": "POST", "path": "/api/auth/restablecer-clave", "body": { "email": "", "codigo": "", "nuevaPassword": "" } }
+  },
+  "headersConToken": { "Authorization": "Bearer TOKEN", "Content-Type": "application/json" },
+  "usuarios": {
+    "listar": { "method": "GET", "path": "/api/usuarios" },
+    "obtener": { "method": "GET", "path": "/api/usuarios/:id" },
+    "crear": { "method": "POST", "path": "/api/usuarios", "body": { "email": "", "password": "", "nombre": "" } },
+    "actualizar": { "method": "PUT", "path": "/api/usuarios/:id", "body": { "email": "", "password": "", "nombre": "" } },
+    "eliminar": { "method": "DELETE", "path": "/api/usuarios/:id" }
+  },
+  "celulares": {
+    "listar": { "method": "GET", "path": "/api/celulares" },
+    "obtener": { "method": "GET", "path": "/api/celulares/:id" },
+    "crear": {
+      "method": "POST",
+      "path": "/api/celulares",
+      "body": {
+        "marca": "",
+        "email": "",
+        "pulgadas": 0,
+        "megapx": 0,
+        "ram": 0,
+        "almacenamientoPpal": 0,
+        "almacenamientoSecun": 0,
+        "sistemaOperativo": "",
+        "operador": "",
+        "tecnologiaDeBanda": "",
+        "wifi": true,
+        "bluetooth": true,
+        "camaras": 0,
+        "marcaCpu": "",
+        "velocidadCpu": 0,
+        "nfc": false,
+        "huella": false,
+        "ir": false,
+        "resteAgua": false,
+        "cantidadSim": 1
+      }
+    },
+    "actualizar": { "method": "PUT", "path": "/api/celulares/:id", "body": "mismo que crear" },
+    "eliminar": { "method": "DELETE", "path": "/api/celulares/:id" }
+  },
+  "reportes": {
+    "celularesMarcaOperador": { "method": "GET", "path": "/api/reportes/celulares/marca-operador?marca=&operador=" },
+    "celularesRamSo": { "method": "GET", "path": "/api/reportes/celulares/ram-so?ramMin=&sistemaOperativo=" },
+    "usuariosDominioNombre": { "method": "GET", "path": "/api/reportes/usuarios/dominio-nombre?dominio=&nombreLike=" },
+    "usuariosCreadosDesde": { "method": "GET", "path": "/api/reportes/usuarios/creados-desde?desde=YYYY-MM-DD&hasta=YYYY-MM-DD" }
+  }
+}
