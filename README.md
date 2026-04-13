@@ -1,13 +1,17 @@
 # Celulares (Kodular + API)
 
-## Clonar
+Repositorio público: `https://github.com/alejandra312008/CELULARES`
+
+## Clonar y probar
 
 ```bash
-git clone <URL_PUBLICO_GITHUB>
+git clone https://github.com/alejandra312008/CELULARES.git
 cd CELULARES
 ```
 
-## Backend (API + SQLite)
+### 1. Backend (API + base de datos SQLite)
+
+Requisitos: [Node.js](https://nodejs.org/) LTS (incluye `npm`).
 
 ```bash
 cd backend
@@ -16,30 +20,43 @@ npm install
 npm start
 ```
 
-Editar `.env`: `JWT_SECRET`, y para correo de recuperación `SMTP_*` y `MAIL_FROM`.
+En `.env` configurar al menos `JWT_SECRET`. Para recuperación de clave por correo: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`.
 
-Probar: `http://localhost:3000/api/health`
+Comprobar que el servidor responde: abrir en el navegador `http://localhost:3000/api/health` (debe devolver `{"ok":true}`).
 
-Desde el móvil: usar la IP de la PC en la misma red, puerto `3000`, en el componente Web de Kodular (`http://192.168.x.x:3000`).
+**Teléfono y Kodular:** el teléfono debe estar en la misma red Wi‑Fi que la PC. En el componente Web de la app, usar la IP local de la PC y el puerto del backend, por ejemplo `http://192.168.0.10:3000` (sustituir por tu IP; en Windows: `ipconfig`).
 
-## APK
+### 2. Aplicación Android (compilado Kodular)
 
-Compilar y exportar APK en [Kodular](https://kodular.io) (Build > Android App Bundle / APK). Colocar el `.apk` en la carpeta `apk/` antes de entregar (opcional en repo si pesa mucho: usar Git LFS o adjuntar en release).
+En el repositorio está el **Android App Bundle** generado en Kodular:
 
-## Archivos
+| Archivo | Descripción |
+|--------|-------------|
+| `android/U1.aab` | App Bundle (formato de publicación; es el entregable de compilación desde Kodular). |
 
-- `backend/` — servidor Node (tablas **usuarios**: username, password hash, nombre, email; **celulares**: ejercicio; CRUD, reportes, login por username, recuperación por email).
-- `sql/schema.sql` — mismo modelo para PostgreSQL/MySQL en la nube (Neon, Supabase, etc.).
-- `kodular/endpoints.json` — rutas para el componente Web.
+**Instalar en el teléfono**
 
-## GitHub (cuenta institucional)
+- Un **.aab** no se instala directamente como un APK. Opciones:
+  - Volver a exportar desde Kodular un **APK** (Build → Android App Bundle / APK) e instalar el `.apk` con permisos de orígenes desconocidos activados, **o**
+  - Usar [bundletool](https://developer.android.com/tools/bundletool) para generar APKs a partir de `U1.aab` (instalación avanzada).
+
+**Código fuente Kodular**
+
+- El código de bloques y pantallas está en el proyecto de **Kodular** (editor en la web). Para incluir el proyecto exportable, en Kodular usar **Export** / guardar proyecto y añadir el archivo **`.aia`** al repositorio con `git add`, `git commit` y `git push` (no usar “Upload” de la web de GitHub).
+
+### 3. Estructura del repositorio
+
+- `backend/` — API Node (CRUD `usuarios` y `celulares`, reportes, login, correo).
+- `sql/schema.sql` — esquema para motor SQL en la nube si lo despliegas fuera de SQLite.
+- `kodular/endpoints.json` — referencia de URLs y JSON para el componente Web.
+- `android/U1.aab` — compilado Android desde Kodular.
+
+## Subir cambios con Git (sin Upload en GitHub)
 
 ```bash
 cd CELULARES
-git init
 git add .
-git commit -m "Proyecto Celulares Corte 1"
-git branch -M main
-git remote add origin https://github.com/USUARIO/REPO.git
-git push -u origin main
+git status
+git commit -m "Descripción del cambio"
+git push origin main
 ```
