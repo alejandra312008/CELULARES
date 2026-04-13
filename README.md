@@ -40,15 +40,16 @@ En el repositorio está el **Android App Bundle** generado en Kodular:
   - Volver a exportar desde Kodular un **APK** (Build → Android App Bundle / APK) e instalar el `.apk` con permisos de orígenes desconocidos activados, **o**
   - Usar [bundletool](https://developer.android.com/tools/bundletool) para generar APKs a partir de `U1.aab` (instalación avanzada).
 
-**Código fuente Kodular**
+**Código fuente Kodular (proyecto importable)**
 
-- El código de bloques y pantallas está en el proyecto de **Kodular** (editor en la web). Para incluir el proyecto exportable, en Kodular usar **Export** / guardar proyecto y añadir el archivo **`.aia`** al repositorio con `git add`, `git commit` y `git push` (no usar “Upload” de la web de GitHub).
+- Archivo: `kodular/U1.aia` — en [Kodular](https://kodular.io): **My Projects → Import project** (o arrastrar el `.aia`) para abrir pantallas y bloques.
 
 ### 3. Estructura del repositorio
 
 - `backend/` — API Node (CRUD `usuarios` y `celulares`, reportes, login, correo).
 - `sql/schema.sql` — esquema para motor SQL en la nube si lo despliegas fuera de SQLite.
 - `kodular/endpoints.json` — referencia de URLs y JSON para el componente Web.
+- `kodular/U1.aia` — proyecto Kodular (código fuente de la app en bloques).
 - `android/U1.aab` — compilado Android desde Kodular.
 
 ## Subir cambios con Git (sin Upload en GitHub)
